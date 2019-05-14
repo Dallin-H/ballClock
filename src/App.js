@@ -46,20 +46,16 @@ export default class App extends Component {
         timer++;
         let activeBall = queueCopy.shift();
         trackMinuteOne.push(activeBall);
-        console.log(activeBall);
       };
 
       let dropMinuteOne = () => {
         let dropBall = trackMinuteOne.pop();
-        console.log(dropBall);
         trackMinuteFive.push(dropBall);
 
         for (let index = trackMinuteOne.length - 1; index >= 0; index--) {
-          const element = trackMinuteOne[index];
-          queueCopy.push(element);
+          let ball = trackMinuteOne.pop();
+          queueCopy.push(ball);
         }
-
-        trackMinuteOne = [];
       };
 
       let dropMinuteFive = () => {
@@ -67,40 +63,37 @@ export default class App extends Component {
         trackHour.push(dropBall);
 
         for (let index = trackMinuteFive.length - 1; index >= 0; index--) {
-          const element = trackMinuteFive[index];
-          queueCopy.push(element);
+          let ball = trackMinuteFive.pop();
+          queueCopy.push(ball);
         }
-
-        trackMinuteFive = [];
       };
 
       let dropHour = () => {
         for (let index = trackHour.length - 1; index >= 0; index--) {
-          const element = trackHour[index];
-          queueCopy.push(element);
+          let ball = trackHour.pop();
+          queueCopy.push(ball);
         }
-
-        trackHour = [];
       };
 
       let calculate = () => {
-        let day = 60 * 24;
+        let day = 1440;
         let sum = timer / day;
         let roundedSum = Math.floor(sum);
 
         this.setState({ result: roundedSum + " days" });
       };
 
-      let comparator = () => {
+      let isEqual = () => {
+        let checker = false;
         for (let index = 0; index < trackQueue.length; index++) {
-          const element = trackQueue[index];
-          if (element !== queueCopy[index]) {
-            return false;
+          if (trackQueue[index] !== queueCopy[index]) {
+            checker = false;
           } else {
-            // console.log('truthy')
-            return true;
+            checker = true;
           }
         }
+        if (checker === true) {console.log(trackQueue, queueCopy)}
+        return checker;
       };
 
       do {
@@ -108,19 +101,18 @@ export default class App extends Component {
           console.log("Hour Drop");
           dropHour();
         } else if (trackMinuteFive.length === 12) {
-          console.log("5 Minute Drop");
+          // console.log("5 Minute Drop");
           dropMinuteFive();
         } else if (trackMinuteOne.length === 5) {
-          console.log("Minute Drop");
+          // console.log("Minute Drop");
           dropMinuteOne();
         } else {
-          console.log("Action");
+          // console.log("Action");
           action();
         }
-      } while (comparator() === false);
+      } while (isEqual() === false);
+      calculate();
     }
-
-
   };
 
   render() {
