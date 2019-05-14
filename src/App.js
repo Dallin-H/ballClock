@@ -42,6 +42,10 @@ export default class App extends Component {
         trackMinuteOne.push(activeBall);
       };
 
+      // dropMinuteOne
+      // remove 1st item from trackMinuteOne and place it at the end of trackMinuteFive.
+      // empty trackMinuteOne in the correct order into trackQueue
+      // if trackMinuteFive length is === 12, trigger dropMinuteFive
       let dropMinuteOne = () => {
         let dropBall = trackMinuteOne.pop();
         trackMinuteFive.push(dropBall);
@@ -52,6 +56,10 @@ export default class App extends Component {
         }
       };
 
+      // dropMinuteFive
+      // remove 1st item from trackMinuteOne and place it at the end of trackHour.
+      // empty trackMinuteFive in the correct order into trackQueue
+      // if trackHour length === 12, trigger dropHour
       let dropMinuteFive = () => {
         let dropBall = trackMinuteFive.pop();
         trackHour.push(dropBall);
@@ -62,6 +70,10 @@ export default class App extends Component {
         }
       };
 
+      // drop hour
+      // remove all and add them to trackQueue in correct order
+      // check trackQueue and compare it to original Queue for solution
+      // if solved, run calculator. if not, run action.
       let dropHour = () => {
         for (let index = trackHour.length - 1; index >= 0; index--) {
           let ball = trackHour.pop();
@@ -69,6 +81,9 @@ export default class App extends Component {
         }
       };
 
+      // calculate
+      // timer is holding a sum of minutes. Calculate will determining how many days will pass
+      // to return the queue to it's original state.
       let calculate = () => {
         let day = 1440;
         let sum = timer / day;
@@ -77,18 +92,10 @@ export default class App extends Component {
         this.setState({ result: roundedSum + " days" });
       };
 
+      // isEqual
+      // compare the two tracks to see if they are identical or not.
+      // identical -> run calculate, notIdentical -> continue the do...while loop
       let isEqual = () => {
-        // let checker = false;
-        // for (let index = 0; index < trackQueue.length; index++) {
-        //   if (trackQueue[index] === queueCopy[index]) {
-        //     checker = true;
-        //   } else {
-        //     checker = false;
-        //   }
-        // }
-        // if (checker === true) {console.log(trackQueue, queueCopy)}
-        // return checker;
-
         if (JSON.stringify(trackQueue) === JSON.stringify(queueCopy)) {
           console.log(trackQueue, queueCopy);
           return true;
@@ -97,6 +104,7 @@ export default class App extends Component {
         }
       };
 
+      // do...while loop is running a conditinal statement before triggering the next action.
       do {
         if (trackHour.length === 12) {
           console.log("Hour Drop");

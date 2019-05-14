@@ -52,7 +52,8 @@ export default class App extends Component {
         timer++;
 
         // calculate
-        // timer is holding a sum of minutes. Calculate will determiningg how many days will pass to return the queue to it's original state.
+        // timer is holding a sum of minutes. Calculate will determining how many days will pass
+        // to return the queue to it's original state.
         let calculate = () => {
           let day = 60 * 24;
           let sum = timer / day;
