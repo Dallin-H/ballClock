@@ -26,11 +26,11 @@ export default class App extends Component {
 
     
     // determine if userInput is a valid number. true -> compute and display result. false -> notify user to correct the input
-    if (userInput < 27 || userInput > 127) {
-      this.setState({
-        result: "I only accept numbers in between 27 and 127, please try again."
-      });
-    } else {
+    // if (userInput < 27 || userInput > 127) {
+    //   this.setState({
+    //     result: "I only accept numbers in between 27 and 127, please try again."
+    //   });
+    // } else {
       let trackMinuteOne = [];
       let trackMinuteFive = [];
       let trackHour = [];
@@ -66,14 +66,21 @@ export default class App extends Component {
         // check trackQueue and compare it to original Queue for solution
         // if solved, run calculator. if not, run action.
         let dropHour = () => {
-          for (let index = trackHour.length - 1; index > 0; index--) {
+          for (let index = trackHour.length - 1; index >= 0; index--) {
             const element = trackHour[index];
             queueCopy.push(element)
           }
 
           trackHour = [];
 
-          trackQueue === queueCopy ? calculate() : action();
+          for (let index = 0; index < trackQueue.length; index++) {
+            const element = trackQueue[index];
+            if(element !== queueCopy[index]) {
+              action();
+            } else {
+              calculate();
+            }
+          }
         }
 
         // dropMinuteFive
@@ -84,7 +91,7 @@ export default class App extends Component {
           let dropBall = trackMinuteFive.pop();
           trackHour.push(dropBall);
 
-          for (let index = trackMinuteFive.length - 1; index > 0; index--) {
+          for (let index = trackMinuteFive.length - 1; index >= 0; index--) {
             const element = trackMinuteFive[index];
             queueCopy.push(element)
           }
@@ -102,17 +109,16 @@ export default class App extends Component {
           let dropBall = trackMinuteOne.pop();
           trackMinuteFive.push(dropBall);
 
-          for (let index = trackMinuteOne.length - 1; index > 0; index--) {
+          for (let index = trackMinuteOne.length - 1; index >= 0; index--) {
             const element = trackMinuteOne[index];
             queueCopy.push(element)
           }
-
+          
           trackMinuteOne = [];
 
           trackMinuteFive.length === 12 ? dropMinuteFive() : action();
         };
 
-        
         let activeBall = queueCopy.shift();
         trackMinuteOne.push(activeBall);
 
@@ -120,7 +126,7 @@ export default class App extends Component {
       };
 
       if (result === 'waiting for input') {action();}
-    }
+    // }
   };
 
   render() {

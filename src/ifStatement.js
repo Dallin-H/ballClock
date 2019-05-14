@@ -92,23 +92,34 @@ export default class App extends Component {
       this.setState({ result: roundedSum + " days" });
     };
 
-
+    let comparator = () => {
+        for (let index = 0; index < trackQueue.length; index++) {
+            const element = trackQueue[index];
+            if(element !== queueCopy[index]) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+    }
     
-    if (trackQueue === queueCopy) {
-      console.log('Eureka!')
-      calculate();
-    } else if (trackHour.length === 12) {
-      console.log('Hour Drop')
-      dropHour();
-    } else if (trackMinuteFive.length === 12) {
-      console.log('5 Minute Drop')
-      dropMinuteFive();
-    } else if (trackMinuteOne.length === 5) {
-      console.log('Minute Drop')
-      dropMinuteOne();
-    } else {
-      console.log('hit')
-      action();
+    while (comparator() === false) {
+        if (trackQueue === queueCopy) {
+          console.log('Eureka!')
+          calculate();
+        } else if (trackHour.length === 12) {
+          console.log('Hour Drop')
+          dropHour();
+        } else if (trackMinuteFive.length === 12) {
+          console.log('5 Minute Drop')
+          dropMinuteFive();
+        } else if (trackMinuteOne.length === 5) {
+          console.log('Minute Drop')
+          dropMinuteOne();
+        } else {
+          console.log('hit')
+          action();
+        }
     }
 
 

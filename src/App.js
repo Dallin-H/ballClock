@@ -11,6 +11,8 @@ export default class App extends Component {
       trackMinuteFive: [],
       trackHour: [],
       trackQueue: [],
+      trackQueueOriginal: [],
+      timer: 0,
       result: "waiting for input"
     };
   }
@@ -22,111 +24,103 @@ export default class App extends Component {
 
   // check the userInput, begin calculation and change result on state.
   startCount = () => {
-    const { userInput, trackQueue, result } = this.state;
+    let trackMinuteOne = [];
+    let trackMinuteFive = [];
+    let trackHour = [];
+    let timer = 0;
+    let trackQueue = [];
+    let queueCopy = [];
 
-    
     // determine if userInput is a valid number. true -> compute and display result. false -> notify user to correct the input
-    // if (userInput < 27 || userInput > 127) {
-    //   this.setState({
-    //     result: "I only accept numbers in between 27 and 127, please try again."
-    //   });
-    // } else {
-      let trackMinuteOne = [];
-      let trackMinuteFive = [];
-      let trackHour = [];
-      let timer = 0;
-      let queueCopy = [];
-
-      // populate trackQueue with the correct number of ballBearings.
-      // make a clone of trackQueue called queueCopy.
-      for (let index = 0; index < userInput; index++) {
+    if (this.state.userInput < 27 || this.state.userInput > 127) {
+      this.setState({
+        result: "I only accept numbers in between 27 and 127, please try again."
+      });
+    } else {
+      for (let index = 0; index < this.state.userInput; index++) {
         trackQueue.push(index);
         queueCopy.push(index);
       }
 
-      // action
-      // add 1 to timer
-      // remove first ballBearing from trackQueue and place it on the end of trackMinuteOne.
-      // if trackMinuteOne length === 5, trigger dropMinuteOne
       let action = () => {
         timer++;
-
-        // calculate
-        // timer is holding a sum of minutes. Calculate will determiningg how many days will pass to return the queue to it's original state.
-        let calculate = () => {
-          let day = 60 * 24;
-          let sum = timer / day;
-          let roundedSum = Math.floor(sum)
-
-          this.setState({result: roundedSum + ' days'})
-        }
-
-        // drop hour
-        // remove all and add them to trackQueue in correct order
-        // check trackQueue and compare it to original Queue for solution
-        // if solved, run calculator. if not, run action.
-        let dropHour = () => {
-          for (let index = trackHour.length - 1; index >= 0; index--) {
-            const element = trackHour[index];
-            queueCopy.push(element)
-          }
-
-          trackHour = [];
-
-          for (let index = 0; index < trackQueue.length; index++) {
-            const element = trackQueue[index];
-            if(element !== queueCopy[index]) {
-              action();
-            } else {
-              calculate();
-            }
-          }
-        }
-
-        // dropMinuteFive
-        // remove 1st item from trackMinuteOne and place it at the end of trackHour.
-        // empty trackMinuteFive in the correct order into trackQueue
-        // if trackHour length === 12, trigger dropHour
-        let dropMinuteFive = () => {
-          let dropBall = trackMinuteFive.pop();
-          trackHour.push(dropBall);
-
-          for (let index = trackMinuteFive.length - 1; index >= 0; index--) {
-            const element = trackMinuteFive[index];
-            queueCopy.push(element)
-          }
-
-          trackMinuteFive = [];
-
-          trackHour.length === 12 ? dropHour() : action();
-        }
-
-        // dropMinuteOne
-        // remove 1st item from trackMinuteOne and place it at the end of trackMinuteFive.
-        // empty trackMinuteOne in the correct order into trackQueue
-        // if trackMinuteFive length is === 12, trigger dropMinuteFive
-        let dropMinuteOne = () => {
-          let dropBall = trackMinuteOne.pop();
-          trackMinuteFive.push(dropBall);
-
-          for (let index = trackMinuteOne.length - 1; index >= 0; index--) {
-            const element = trackMinuteOne[index];
-            queueCopy.push(element)
-          }
-          
-          trackMinuteOne = [];
-
-          trackMinuteFive.length === 12 ? dropMinuteFive() : action();
-        };
-
         let activeBall = queueCopy.shift();
         trackMinuteOne.push(activeBall);
-
-        trackMinuteOne.length === 5 ? dropMinuteOne() : action();
+        console.log(activeBall);
       };
 
-      if (result === 'waiting for input') {action();}
-    // }
+      let dropMinuteOne = () => {
+        let dropBall = trackMinuteOne.pop();
+        console.log(dropBall);
+        trackMinuteFive.push(dropBall);
+
+        for (let index = trackMinuteOne.length - 1; index >= 0; index--) {
+          const element = trackMinuteOne[index];
+          queueCopy.push(element);
+        }
+
+        trackMinuteOne = [];
+      };
+
+      let dropMinuteFive = () => {
+        let dropBall = trackMinuteFive.pop();
+        trackHour.push(dropBall);
+
+        for (let index = trackMinuteFive.length - 1; index >= 0; index--) {
+          const element = trackMinuteFive[index];
+          queueCopy.push(element);
+        }
+
+        trackMinuteFive = [];
+      };
+
+      let dropHour = () => {
+        for (let index = trackHour.length - 1; index >= 0; index--) {
+          const element = trackHour[index];
+          queueCopy.push(element);
+        }
+
+        trackHour = [];
+      };
+
+      let calculate = () => {
+        let day = 60 * 24;
+        let sum = timer / day;
+        let roundedSum = Math.floor(sum);
+
+        this.setState({ result: roundedSum + " days" });
+      };
+
+      let comparator = () => {
+        for (let index = 0; index < trackQueue.length; index++) {
+          const element = trackQueue[index];
+          if (element !== queueCopy[index]) {
+            return false;
+          } else {
+            // console.log('truthy')
+            return true;
+          }
+        }
+      };
+
+      do {
+        if (trackHour.length === 12) {
+          console.log("Hour Drop");
+          dropHour();
+        } else if (trackMinuteFive.length === 12) {
+          console.log("5 Minute Drop");
+          dropMinuteFive();
+        } else if (trackMinuteOne.length === 5) {
+          console.log("Minute Drop");
+          dropMinuteOne();
+        } else {
+          console.log("Action");
+          action();
+        }
+      } while (comparator() === false);
+    }
+
+
   };
 
   render() {
