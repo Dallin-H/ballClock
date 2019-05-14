@@ -7,12 +7,6 @@ export default class App extends Component {
     super(props);
     this.state = {
       userInput: 0,
-      trackMinuteOne: [],
-      trackMinuteFive: [],
-      trackHour: [],
-      trackQueue: [],
-      trackQueueOriginal: [],
-      timer: 0,
       result: "waiting for input"
     };
   }
@@ -84,16 +78,23 @@ export default class App extends Component {
       };
 
       let isEqual = () => {
-        let checker = false;
-        for (let index = 0; index < trackQueue.length; index++) {
-          if (trackQueue[index] !== queueCopy[index]) {
-            checker = false;
-          } else {
-            checker = true;
-          }
+        // let checker = false;
+        // for (let index = 0; index < trackQueue.length; index++) {
+        //   if (trackQueue[index] === queueCopy[index]) {
+        //     checker = true;
+        //   } else {
+        //     checker = false;
+        //   }
+        // }
+        // if (checker === true) {console.log(trackQueue, queueCopy)}
+        // return checker;
+
+        if (JSON.stringify(trackQueue) === JSON.stringify(queueCopy)) {
+          console.log(trackQueue, queueCopy);
+          return true;
+        } else {
+          return false;
         }
-        if (checker === true) {console.log(trackQueue, queueCopy)}
-        return checker;
       };
 
       do {
