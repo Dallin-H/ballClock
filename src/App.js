@@ -73,7 +73,14 @@ export default class App extends Component {
 
           trackHour = [];
 
-          trackQueue === queueCopy ? calculate() : action();
+          for (let index = 0; index < trackQueue.length; index++) {
+            const element = trackQueue[index];
+            if(element !== queueCopy[index]) {
+              action();
+            } else {
+              calculate();
+            }
+          }
         }
 
         // dropMinuteFive
