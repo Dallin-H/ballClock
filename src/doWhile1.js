@@ -139,9 +139,15 @@ export default class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <p>30 -> 45 days</p>
-          <p>45 -> 378 days</p>
-          <p></p>
+          <h3>Welcome to the Ball Clock Calculator!</h3>
+          <h6>By Dallin Hyde</h6>
+          Please input a number to count.
+          <br />
+          When you click on 'Start Count' I will display
+          <br />
+          how long it will take the first ball to get
+          <br />
+          back to the number one slot in the queue.
           <input
             type="number"
             placeholder="27-127"
