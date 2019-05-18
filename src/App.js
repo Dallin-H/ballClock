@@ -25,6 +25,7 @@ export default class App extends Component {
     let trackQueue = [];
     let queueCopy = [];
     let equalYetGlobal = false;
+    let start = new Date();
 
     // determine if userInput is a valid number. true -> compute and display result. false -> notify user to correct the input.
     if (this.state.userInput < 27 || this.state.userInput > 127) {
@@ -33,74 +34,61 @@ export default class App extends Component {
       });
     } else {
       // populate trackQueue and queueCopy.
+      this.setState({
+        result: 'loading...'
+      })
       for (let index = 0; index < this.state.userInput; index++) {
         trackQueue.push(index);
         queueCopy.push(index);
-      }
+      };
 
       let action = () => {
         let ball = queueCopy.shift();
         trackMinuteOne.push(ball);
       };
 
-      let dropMinuteOne = () => {
-        let dropBall = trackMinuteOne.pop();
-        trackMinuteFive.push(dropBall);
-
-        for (let index = trackMinuteOne.length - 1; index >= 0; index--) {
-          let ball = trackMinuteOne.pop();
-          queueCopy.push(ball);
-        }
-      };
-
-      let dropMinuteFive = () => {
-        let dropBall = trackMinuteFive.pop();
-        trackHour.push(dropBall);
-
-        for (let index = trackMinuteFive.length - 1; index >= 0; index--) {
-          let ball = trackMinuteFive.pop();
-          queueCopy.push(ball);
-        }
-      };
-
-      let dropHour = () => {
-        timer++;
-
-        let ball12 = trackHour.pop();
-        while (trackHour.length > 0) {
-          queueCopy.push(trackHour.pop());
-          }
-          queueCopy.push(ball12);
-
-        let checkEqual = () => {
-          if (queueCopy[0] !== 0) {
-            return false;
-          } else {
-            return JSON.stringify(trackQueue) === JSON.stringify(queueCopy);
-          }
+      let emptyTray = (current, next) => {
+        let ball = current.pop();
+        while (current.length > 0) {
+          queueCopy.push(current.pop());
         };
-        
-        equalYetGlobal = checkEqual();
+        next.push(ball);
+      };
+
+      let checkEqual = () => {
+        // if (queueCopy[0] !== 0) {
+        //   return false;
+        // } else {
+        //   return JSON.stringify(trackQueue) === JSON.stringify(queueCopy);
+        // };
+        for (let i = 0; i < queueCopy.length; i ++) {
+          if (trackQueue[i] !== queueCopy[i]) {
+              return false;
+          }
+      }
+      return true;
       };
 
       let calculate = () => {
         let roundedSum = Math.floor(timer / 2);
-
         this.setState({ result: roundedSum + " days" });
       };
 
       do {
         if (trackHour.length === 12) {
-          dropHour();
+          timer++;
+          emptyTray(trackHour, queueCopy);
+          equalYetGlobal = checkEqual();
         } else if (trackMinuteFive.length === 12) {
-          dropMinuteFive();
+          emptyTray(trackMinuteFive, trackHour);
         } else if (trackMinuteOne.length === 5) {
-          dropMinuteOne();
+          emptyTray(trackMinuteOne, trackMinuteFive);
         } else {
           action();
         }
       } while (equalYetGlobal === false);
       calculate();
+      console.log(new Date() - start);
     }
   };
 
