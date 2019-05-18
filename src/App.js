@@ -29,25 +29,21 @@ export default class App extends Component {
     // determine if userInput is a valid number. true -> compute and display result. false -> notify user to correct the input.
     if (this.state.userInput < 27 || this.state.userInput > 127) {
       this.setState({
-        result: "I only accept numbers in between 27 and 127, please try again."
+        result: "I only accept numbers inbetween 27 and 127, please try again."
       });
     } else {
       // populate trackQueue and queueCopy.
       for (let index = 0; index < this.state.userInput; index++) {
-        trackQueue.push(index + 1);
-        queueCopy.push(index + 1);
+        trackQueue.push(index);
+        queueCopy.push(index);
       }
 
       let action = () => {
         let ball = queueCopy.shift();
         trackMinuteOne.push(ball);
-        
-
-
       };
 
       let dropMinuteOne = () => {
-
         let dropBall = trackMinuteOne.pop();
         trackMinuteFive.push(dropBall);
 
@@ -58,7 +54,6 @@ export default class App extends Component {
       };
 
       let dropMinuteFive = () => {
-
         let dropBall = trackMinuteFive.pop();
         trackHour.push(dropBall);
 
@@ -70,30 +65,25 @@ export default class App extends Component {
 
       let dropHour = () => {
         timer++;
-        for (let index = trackHour.length - 1; index >= 0; index--) {
-          let ball = trackHour.pop();
-          queueCopy.push(ball);
-        }
 
-        let equalYetLocal = false;
+        let ball12 = trackHour.pop();
+        while (trackHour.length > 0) {
+          queueCopy.push(trackHour.pop());
+          }
+          queueCopy.push(ball12);
+
         let checkEqual = () => {
-          if (queueCopy[0] !== 1) {
-            equalYetLocal = false;
+          if (queueCopy[0] !== 0) {
+            return false;
           } else {
-            if (JSON.stringify(trackQueue) === JSON.stringify(queueCopy)) {
-              equalYetLocal = true;
-            } else {
-              equalYetLocal = false;
-            }
+            return JSON.stringify(trackQueue) === JSON.stringify(queueCopy);
           }
         };
-
-        checkEqual();
-        equalYetGlobal = equalYetLocal;
+        
+        equalYetGlobal = checkEqual();
       };
 
       let calculate = () => {
-
         let roundedSum = Math.floor(timer / 2);
 
         this.setState({ result: roundedSum + " days" });
@@ -107,11 +97,6 @@ export default class App extends Component {
         } else if (trackMinuteOne.length === 5) {
           dropMinuteOne();
         } else {
-          console.log('q: ' + queueCopy)
-          console.log('t1: ' + trackMinuteOne)
-          console.log('t5: ' + trackMinuteFive)
-          console.log('th: ' + trackHour)
-          console.log('-----------------')
           action();
         }
       } while (equalYetGlobal === false);
